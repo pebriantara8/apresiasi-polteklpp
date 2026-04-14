@@ -19,6 +19,17 @@
 /storage/*.key
 /storage/pail
 /vendor
+
+# Untuk server hosting
+/public/.htaccess
+/public/favicon.ico
+/public/.index.php
+/public/robots.txt
+.htaccess
+favicon.ico
+.index.php
+robots.txt
+
 Homestead.json
 Homestead.yaml
 Thumbs.db
