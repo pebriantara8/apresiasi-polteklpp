@@ -21,10 +21,10 @@
 /vendor
 
 # Untuk server hosting
-/public/.htaccess
-/public/favicon.ico
-/public/index.php
-/public/robots.txt
+# /public/.htaccess
+# /public/favicon.ico
+# /public/index.php
+# /public/robots.txt
 .htaccess
 favicon.ico
 index.php
