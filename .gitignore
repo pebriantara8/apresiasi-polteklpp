@@ -5,6 +5,7 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.gitignore
 /.fleet
 /.idea
 /.nova
@@ -25,10 +26,10 @@
 # /public/favicon.ico
 # /public/index.php
 # /public/robots.txt
-.htaccess
-favicon.ico
-index.php
-robots.txt
+# .htaccess
+# favicon.ico
+# index.php
+# robots.txt
 
 Homestead.json
 Homestead.yaml
