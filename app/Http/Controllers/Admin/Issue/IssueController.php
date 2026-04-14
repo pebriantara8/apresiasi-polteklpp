@@ -8,7 +8,9 @@ use Illuminate\View\View;
 use App\Http\Controllers\Admin\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Models\Issue;
+use App\Models\Issue_level_publikasi;
 use App\Models\Issue_penulis;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -41,10 +43,19 @@ class IssueController extends Controller
         // count data for information above table
         $data_count['all_data'] = Issue::get()->count('*');
 
-        $datas = Issue::latest()
-            ->where('judul', 'like', '%' . $q . '%')
-            ->orWhere('link_publikasi', 'like', '%' . $q . '%')
-            ->paginate($p)->withQueryString();
+        if (auth()->user()->hasRole('admin')) {
+            $datas = Issue::latest()
+                ->where('judul', 'like', '%' . $q . '%')
+                ->orWhere('link_publikasi', 'like', '%' . $q . '%')
+                ->paginate($p)->withQueryString();
+            // dd('admin');
+        } else {
+            $datas = Issue::latest()
+                ->where('user_id', Auth::id())
+                ->Where('judul', 'like', '%' . $q . '%')
+                // ->orWhere('link_publikasi', 'like', '%' . $q . '%')
+                ->paginate($p)->withQueryString();
+        }
 
         foreach ($datas as $kd => $vd) {
             $dt_penulis = Issue_penulis::latest()
@@ -58,10 +69,11 @@ class IssueController extends Controller
     public function create()
     {
         $datas = new Issue;
+        $datas_level_publikasi = Issue_level_publikasi::get();
         $form = 'c';
         $route = 'admin.issue.store';
         $breadcrumbs = 'create_new_issue';
-        return view('admin.issue.create_issue', compact('route', 'form', 'datas', 'breadcrumbs'));
+        return view('admin.issue.create_issue', compact('route', 'form', 'datas', 'datas_level_publikasi', 'breadcrumbs'));
     }
 
     public function detail($id)

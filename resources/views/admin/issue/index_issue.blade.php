@@ -80,9 +80,10 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%;">#</th>
-                                <th style="width: 15%;">Luaran</th>
+                                <th style="width: 10%;">Luaran</th>
                                 <th style="width: 50%;">Judul</th>
-                                <th style="width: 17%;">Penulis</th>
+                                <th style="width: 15%;">Penulis</th>
+                                <th style="width: 7%;">Status</th>
                                 <th style="width: 13%;">Aksi</th>
                             </tr>
                         </thead>
@@ -100,15 +101,15 @@
                                     @endforeach
                                 </td>
                                 <td>
+                                    <div class="ms-auto badge bg-warning">Diajukan</div>
+                                </td>
+                                <td>
                                     <div class="d-inline-block dropdown">
                                         <div role="group" class="btn-group-sm btn-group btn-group-toggle"
                                             data-toggle="buttons">
-                                            <a href="{{route('admin.issue.detail',['id'=>$data->id])}}"><button
-                                                    type="button" class="btn btn-alternate me-1">Detail</button></a>
-                                            <button type="button" class="btn btn-alternate">
-                                                <i class="fa fa-gear" style="font-size:14px"></i>
-                                            </button>
-                                            <!-- <button type="button" class="btn btn-alternate">Three</button> -->
+                                            <div class="ms-auto badge bg-alternate me-1">Detail</div>
+                                            <div class="ms-auto badge bg-alternate me-1">Aksi<i
+                                                    class="fa fa-angle-down ms-2 opacity-8"></i></div>
                                         </div>
                                     </div>
                                     <!-- <div class="dropdown">

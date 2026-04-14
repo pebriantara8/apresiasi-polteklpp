@@ -83,6 +83,7 @@
                                         <option value="5">Prosiding Internasional Terindeks Scopus dan Scimagojr
                                         </option>
                                         <option value="6">Prosiding Internasional Terindeks Scopus, IEEE, SPIE</option>
+                                        <option value="7">Prosiding (ISSN atau ISBN) Nasional</option>
                                     </select>
                                 </div>
                             </div>
@@ -92,19 +93,9 @@
                                     <select type="select" id="levelPublikasi" name="level_publikasi"
                                         class="form-select">
                                         <option value="">Select</option>
-                                        <option value="1">Q1</option>
-                                        <option value="2">Q2</option>
-                                        <option value="3">Q3</option>
-                                        <option value="4">Q4</option>
-                                        <option value="5">SINTA 1</option>
-                                        <option value="6">SINTA 2</option>
-                                        <option value="7">SINTA 3</option>
-                                        <option value="8">SINTA 4</option>
-                                        <option value="9">SINTA 5</option>
-                                        <option value="10">SINTA 6</option>
-                                        <option value="10">Prosiding Terindeks SCOPUS, Scimagojr</option>
-                                        <option value="11">Prosiding Terindeks SCOPUS, IEEE, SPIE</option>
-                                        <option value="12">Prosiding (ISSN atau ISBN) Nasional</option>
+                                        @foreach($datas_level_publikasi as $kdlp => $vdlp)
+                                        <option value="{{$vdlp->id}}">{{$vdlp->nama_level_publikasi}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>

@@ -38,12 +38,7 @@
                         Issue
                     </a>
                 </li>
-                <!-- <li>
-                    <a href="{{ url('admin/dashboard') }}" class="">
-                        <i class="metismenu-icon pe-7s-next-2"></i>
-                        Archive
-                    </a>
-                </li> -->
+                @role('admin')
                 <li class="app-sidebar__heading">Members/Users</li>
                 <li>
                     <a href="{{ url('admin/issue/create') }}" class="">
@@ -57,13 +52,16 @@
                         Roles & Permissions
                     </a>
                 </li>
+                @endrole
                 <li class="app-sidebar__heading">Profile</li>
+                @role('admin')
                 <li>
                     <a href="{{ url('admin/issue/create') }}" class="">
                         <i class="metismenu-icon pe-7s-user"></i>
                         My Profile
                     </a>
                 </li>
+                @endrole
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
