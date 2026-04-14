@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', function () {
-    return view('dashboard');
+    // return view('dashboard');
+    return redirect('/admin/dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', function () {
