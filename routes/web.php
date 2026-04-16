@@ -36,9 +36,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::resource('/admin/dashboard', \App\Http\Controllers\Admin\Dashboard\DashboardController::class)->names('admin.dashboard');
 
-    Route::resource('/admin/issue', \App\Http\Controllers\Admin\Issue\IssueController::class)->names('admin.issue');
     Route::get('/admin/issue/detail/{id}', [IssueController::class, 'detail'])->name('admin.issue.detail');
+    Route::put('/admin/issue/validasi_ajuan/{id}', [IssueController::class, 'validasi_ajuan'])->name('admin.issue.validasi_ajuan');
+    Route::resource('/admin/issue', \App\Http\Controllers\Admin\Issue\IssueController::class)->names('admin.issue');
 
-    Route::resource('/admin/user', \App\Http\Controllers\Admin\User\UserController::class)->names('admin.user');
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('/admin/user', \App\Http\Controllers\Admin\User\UserController::class)->names('admin.user');
+    });
 });
 require __DIR__ . '/auth.php';

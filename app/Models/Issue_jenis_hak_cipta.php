@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class Issue_level_publikasi extends Model
+class Issue_jenis_hak_cipta extends Model
 {
 
     use HasFactory, Notifiable, HasRoles, SoftDeletes;

@@ -5,9 +5,9 @@
         <div class="page-title-wrapper">
             <div class="page-title-heading">
                 <div class="page-title-icon"><i class="pe-7s-plus icon-gradient bg-mean-fruit"></i></div>
-                <div>Form Pengajuan
+                <div>Form Pengajuan Form Pengajuan Dana Apresiasi
                     <div class="page-title-subheading">
-                        Admin -> Form Pengajuan
+                        Admin -> Issue -> Form Pengajuan Dana Apresiasi
                     </div>
                 </div>
             </div>
@@ -113,8 +113,15 @@
                                         <option value="">Select</option>
                                         <option value="1">Paten Desain Industri</option>
                                         <option value="2">Paten Sederhana</option>
-                                        <option value="2">Hak Cipta dan Merek Produk Dagang</option>
+                                        <option value="3">Hak Cipta dan Merek Produk Dagang</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="position-relative row mb-3">
+                                <label for="" class="form-label col-sm-2 col-form-label">Nomor Hak Cipta/Paten</label>
+                                <div class="col-sm-10">
+                                    <input name="no_hak_cipta" id="noHakCipta" placeholder="Nomor Hak Cipta/Paten"
+                                        type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="position-relative row mb-3">
@@ -126,12 +133,23 @@
                                                 style="display: block; width: 100%; height: 100%;">X</span>
                                         </div>
                                         <div class="input-group-text">
-                                            <input name="penulis_utama" value="1" type="radio" class="form-check-input"
-                                                checked="checked">
+                                            <input name="penulis_utama" value="0" type="radio"
+                                                class="form-check-input form_input_penulis_utama">
 
                                         </div>
-                                        <input placeholder="Penulis" class="form-control form_input_penulis"
+                                        <input placeholder="Penulis" type="text" class="form-control form_input_penulis"
                                             name="penulis[]">
+                                        <select type="select" id="penulisJabatan" name="penulis_jabatan[]"
+                                            class="form-select">
+                                            <option value="">Jabatan/Instansi</option>
+                                            <option value="1">Dosen Poltek LPP</option>
+                                            <option value="2">Mahasiswa Poltek LPP</option>
+                                            <option value="3">Pihak Luar/Eksternal</option>
+                                        </select>
+                                        <input type="text" name="penulis_bank[]" class="form-control" value=""
+                                            placeholder="Bank">
+                                        <input type="text" name="penulis_norek[]" class="form-control" value=""
+                                            placeholder="No Rekening">
                                     </div>
                                 </div>
                             </div>
@@ -171,8 +189,8 @@
                                 </div>
                             </div>
                             <div class="position-relative row form-check">
-                                <div class="col-sm-10 offset-sm-2"><button type="submit" class="btn btn-primary">Submit
-                                        Form</button>
+                                <div class="col-sm-10 offset-sm-2"><button type="submit"
+                                        class="btn btn-primary">Ajukan</button>
                                 </div>
                             </div>
                         </form>

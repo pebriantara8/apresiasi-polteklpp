@@ -20,13 +20,17 @@ class Issue extends Model
         'user_id',
         'bentuk_luaran',
         'judul',
+        'jenis_buku',
         'isbn_buku',
         'jenis_publikasi',
         'level_publikasi',
         'link_publikasi',
         'jenis_hak_cipta',
+        'no_hak_cipta',
+        'penulis_utama',
         'biaya_apc',
         'bukti_pembayaran',
+        'issue_status',
     ];
 
     // public function sapi()
@@ -41,7 +45,6 @@ class Issue extends Model
 
     public function kerbau()
     {
-        // return $this->hasOne(Issue_luaran::class, 'id', 'bentuk_luaran');
         return $this->belongsTo(Issue_luaran::class, 'bentuk_luaran', 'id');
     }
 }

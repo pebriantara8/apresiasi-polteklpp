@@ -97,11 +97,20 @@
                                 <td>{{ $data->judul }}</td>
                                 <td>
                                     @foreach ($data->penulis_group as $kpg => $vpg)
+                                    @if($vpg->koresponden==1)
+                                    <b><span>{{$vpg->penulis_ke}}. {{$vpg->nama}}</span></b> <br>
+                                    @else
                                     <span>{{$vpg->penulis_ke}}. {{$vpg->nama}}</span> <br>
+                                    @endif
                                     @endforeach
                                 </td>
                                 <td>
+                                    @if($data->issue_status==0)
                                     <div class="ms-auto badge bg-warning">Diajukan</div>
+                                    @endif
+                                    @if($data->issue_status==1)
+                                    <div class="ms-auto badge bg-secondary">Diterima</div>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="" style="display: inline-flex;position: relative;">
@@ -109,6 +118,7 @@
                                             <a href="{{route('admin.issue.show',$data->id)}}"
                                                 class="ms-auto badge bg-alternate me-1">Detail</a>
                                         </div>
+                                        @role('admin')
                                         <div role="group" class="btn-group-sm btn-group btn-group-toggle"
                                             data-toggle="buttons" data-bs-toggle="dropdown">
                                             <div class="ms-auto badge bg-alternate me-1">Aksi
@@ -117,19 +127,20 @@
                                             </div>
                                         </div>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item"
+                                            <!-- <a class="dropdown-item"
                                                 href="{{ route('admin.issue.edit', $data->id) }}"><i
                                                     class="ti ti-pencil me-1"></i>
-                                                Edit</a>
+                                                Edit</a> -->
                                             <form method="POST" onsubmit="return confirm('Apakah Anda Yakin?');"
                                                 action="{{ route('admin.issue.destroy', $data->id) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="dropdown-item">
+                                                <button disabled type="submit" class="dropdown-item">
                                                     <i class="ti ti-trash me-1"></i> Delete
                                                 </button>
                                             </form>
                                         </div>
+                                        @endrole
                                     </div>
                                 </td>
                             </tr>

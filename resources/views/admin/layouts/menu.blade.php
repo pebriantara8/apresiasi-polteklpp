@@ -35,7 +35,7 @@
                 <li>
                     <a href="{{ url('admin/issue') }}" class="">
                         <i class="metismenu-icon pe-7s-news-paper"></i>
-                        Data Pengajuan
+                        Data Ajuan
                     </a>
                 </li>
                 @role('admin')

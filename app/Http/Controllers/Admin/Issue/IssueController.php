@@ -13,6 +13,7 @@ use App\Models\Issue;
 use App\Models\Issue_jenis_buku;
 use App\Models\Issue_level_publikasi;
 use App\Models\Issue_penulis;
+use App\Models\Issue_jenis_hak_cipta;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Validation\ValidationException;
@@ -82,18 +83,249 @@ class IssueController extends Controller
         return view('admin.issue.detail_issue');
     }
 
+    public function validasi_ajuan(Request $request, $id)
+    {
+        $dt = Issue::find($id);
+        $input['issue_status'] = 1;
+        $save = $dt->update($input);
+        dd($dt);
+        if ($save) {
+            session()->flash('success', 'User update successfully');
+            return response()->json([
+                'success' => true,
+                // 'errors' => true,
+                'data' => $dt,
+                'code' => '200',
+                'message' => 'success update data',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'errors' => true,
+                'data' => $dt,
+                'code' => '200',
+                'message' => 'Error update data',
+            ]);
+        }
+    }
+
     public function show($id): View
     {
+        $datas_level_publikasi = Issue_level_publikasi::get();
+        $form = 's';
+        $route = 'admin.issue.validasi_ajuan';
+        $breadcrumbs = 'create_new_issue';
+
         $dt['issue'] = Issue::find($id);
-        if ($dt['issue']->bentuk_luaran = 1) {
-            $dt['apresiasi'] = Issue_jenis_buku::find($dt['issue']->bentuk_luaran);
+        $datas = $dt['issue'];
+        $dt_issue = $dt['issue'];
+        // dd($dt_issue);
+        $dt_penulis = Issue_penulis::where('issue_id', $id)
+            ->orderBy('penulis_ke', 'asc')
+            ->get();
+        // $dt['penulis'] = $dt_penulis;
+
+        if ($dt_issue->bentuk_luaran == "1") {
+            // JIKA BENTUK LUARAN BUKU
+            $dt['apresiasi'] = Issue_jenis_buku::find($dt['issue']->jenis_buku);
             $dt['apresiasi']['nama_apresiasi'] = $dt['apresiasi']->nama_jenis_buku;
             $dt['apresiasi']['nominal'] = $dt['apresiasi']->nominal_jenis_buku;
             $dt['apresiasi']['total'] = $dt['issue']->biaya_apc + $dt['apresiasi']->nominal_jenis_buku;
+
+            // APRESIASI PENULIS 1 KORESPONDEN
+            if ($dt_penulis[0]->koresponden == 1) {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 100;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'];
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 40 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            } else {
+                $dt['penulis_utama_ini'] = 'asdasd';
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 100;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'];
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 40 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            }
+        } elseif ($dt['issue']->bentuk_luaran == 2) {
+            // JIKA BENTUK LUARAN PUBLIKASI
+            $dt['apresiasi'] = Issue_level_publikasi::find($dt['issue']->level_publikasi);
+            $dt['apresiasi']['nama_apresiasi'] = $dt['apresiasi']->nama_level_publikasi;
+            $dt['apresiasi']['nominal'] = $dt['apresiasi']->nominal_level_publikasi;
+            $dt['apresiasi']['total'] = $dt['issue']->biaya_apc + $dt['apresiasi']->nominal_level_publikasi;
+
+            // APRESIASI PUBLIKASI PENULIS 1 KORESPONDEN
+            if ($dt_penulis[0]->koresponden == 1) {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 40 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            } else {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    $dt_penulis[1]['persen'] = 50;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 20 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 40;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            }
+        } elseif ($dt['issue']->bentuk_luaran == 3) {
+            // JIKA BENTUK LUARAN PUBLIKASI
+            $dt['apresiasi'] = Issue_level_publikasi::find($dt['issue']->level_publikasi);
+            $dt['apresiasi']['nama_apresiasi'] = $dt['apresiasi']->nama_level_publikasi;
+            $dt['apresiasi']['nominal'] = $dt['apresiasi']->nominal_level_publikasi;
+            $dt['apresiasi']['total'] = $dt['issue']->biaya_apc + $dt['apresiasi']->nominal_level_publikasi;
+
+            // APRESIASI PROSIDING PENULIS 1 KORESPONDEN
+            if ($dt_penulis[0]->koresponden == 1) {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 40 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 60;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 60 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            } else {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    $dt_penulis[1]['persen'] = 50;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 20 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 40;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                    $dt_penulis[1]['persen'] = 40;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            }
+        } elseif ($dt['issue']->bentuk_luaran == 4) {
+            // JIKA BENTUK LUARAN HKI
+            $dt['apresiasi'] = Issue_jenis_hak_cipta::find($dt['issue']->jenis_hak_cipta);
+            $dt['apresiasi']['nama_apresiasi'] = $dt['apresiasi']->nama_jenis_hak_cipta;
+            $dt['apresiasi']['nominal'] = $dt['apresiasi']->nominal_jenis_hak_cipta;
+            $dt['apresiasi']['total'] = $dt['issue']->biaya_apc + $dt['apresiasi']->nominal_jenis_hak_cipta;
+
+            // APRESIASI PUBLIKASI PENULIS 1 KORESPONDEN
+            if ($dt_penulis[0]->koresponden == 1) {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 100;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'];
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    $dt_penulis[1]['persen'] = 50;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 50 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            } else {
+                if (count($dt_penulis) < 2) {
+                    $dt_penulis[0]['persen'] = 100;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'];
+                } elseif (count($dt_penulis) == 2) {
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    $dt_penulis[1]['persen'] = 50;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                } elseif (count($dt_penulis) > 2) {
+                    $persen_bagi = 20 / (count($dt_penulis) - 1);
+                    $dt_penulis[0]['persen'] = 50;
+                    $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    $dt_penulis[1]['persen'] = 50;
+                    $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
+                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                        $dt_penulis[$i]['persen'] = $persen_bagi;
+                        $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
+                    }
+                }
+                $dt['penulis'] = $dt_penulis;
+            }
         }
+
         $data = $dt;
         // dd($data);
-        return view('admin.issue.show_issue', compact('data'));
+        // return view('admin.issue.show_issue', compact('data'));
+        return view('admin.issue.show_issue', compact('route', 'form', 'datas', 'data', 'datas_level_publikasi', 'breadcrumbs'));
     }
 
     public function store(Request $request)
@@ -110,6 +342,10 @@ class IssueController extends Controller
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
                 'checkbox_confirm' => 'required',
+                'penulis_bank.*' => 'required',
+                'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
+                'checkbox_confirm' => 'required',
             ], [], [
                 'judul' => 'Judul',
             ]);
@@ -124,6 +360,9 @@ class IssueController extends Controller
                 'penulis.*' => 'required',
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
+                'penulis_bank.*' => 'required',
+                'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
                 'checkbox_confirm' => 'required',
             ], [], [
                 'judul' => 'Judul',
@@ -136,7 +375,11 @@ class IssueController extends Controller
                 'penulis.*' => 'required',
                 'biaya_apc' => 'required',
                 'jenis_hak_cipta' => 'required',
+                'no_hak_cipta' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
+                'penulis_bank.*' => 'required',
+                'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
                 'checkbox_confirm' => 'required',
             ], [], [
                 'judul' => 'Judul',
@@ -149,6 +392,7 @@ class IssueController extends Controller
             ]);
         }
 
+        // dd($input);
         // simpan image ke storage
         $file = $request->file('bukti_pembayaran');
         $hashedName = $file->hashName(); // Generates the hash
@@ -164,13 +408,15 @@ class IssueController extends Controller
         $array = $input;
         unset($array['penulis']);
         unset($array['penulis_utama']);
-        // dd($array);
         $data = Issue::create($array);
         if ($data) {
 
             // INPUT DATA PENULIS KE TABEL PENULIS
             $issue_id = $data->id;
             $input_penulis = $input['penulis'];
+            $input_penulis_jabatan = $input['penulis_jabatan'];
+            $input_penulis_bank = $input['penulis_bank'];
+            $input_penulis_norek = $input['penulis_norek'];
             $arr_penulis = [];
             foreach ($input_penulis as $kip => $vip) {
 
@@ -179,12 +425,17 @@ class IssueController extends Controller
                     'issue_id' => $issue_id,
                     'penulis_ke' => $kip + 1,
                     'nama' => $vip,
-                    'koresponden' => $input['penulis_utama'] = ($kip + 1) ? $kip : 0,
+                    'koresponden' => $input['penulis_utama'] == $kip ? 1 : 0,
+                    'status' => '0',
+                    'issue_penulis_jabatan_id' => $input_penulis_jabatan[$kip],
+                    'penulis_bank' => $input_penulis_bank[$kip],
+                    'no_rekening' => $input_penulis_norek[$kip],
                     'status' => '0'
                 ];
             }
             $create_issue_penulis = Issue_penulis::insert($arr_penulis);
             if ($create_issue_penulis) {
+                // dd('ok');
                 session()->flash('success', 'Data created successfully');
                 return response()->json([
                     'success' => true,

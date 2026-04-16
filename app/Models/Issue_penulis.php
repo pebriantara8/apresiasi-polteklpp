@@ -20,6 +20,9 @@ class Issue_Penulis extends Model
         'nama',
         'koresponden',
         'penulis_ke',
+        'no_rekening',
+        'issue_penulis_jabatan_id',
+        'penulis_bank',
         'status',
     ];
 
