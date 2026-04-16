@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin\Dashboard;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\Controller;
+use App\Models\Issue;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 
@@ -22,9 +24,10 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // return redirect(('/admin/role'))->withSuccess('Anda telah berhasil masuk!');
-        // return redirect()->route('posts')-> withSuccess('Anda telah berhasil masuk!');
-        return View('admin.dashboard.home');
+        $datas['total_issue'] = Issue::count();
+        $datas['total_user'] = User::count();
+        $datas['issue_acc'] = count(Issue::where('issue_status', 1)->get());
+        return View('admin.dashboard.home', compact('datas'));
     }
 
     public function show(): View

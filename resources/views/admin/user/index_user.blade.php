@@ -4,10 +4,10 @@
     <div class="app-page-title mb-0">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
-                <div class="page-title-icon"><i class="pe-7s-news-paper icon-gradient bg-mean-fruit"></i></div>
-                <div>Data Pengajuan
+                <div class="page-title-icon"><i class="pe-7s-users icon-gradient bg-mean-fruit"></i></div>
+                <div>Data User
                     <div class="page-title-subheading">
-                        Admin -> Pengajuan
+                        Admin -> User
                     </div>
                 </div>
             </div>
@@ -67,24 +67,27 @@
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <a class="dropdown-item"
-                                                    href="{{ route('admin.issue.index') }}">Excel</a>
+                                                    href="{{ route('admin.user.index') }}">Excel</a>
                                             </li>
                                         </ul>
+                                    </div>
+                                    <div class="d-inline-block dropdown">
+                                        <a href="{{ route('admin.user.create') }}" type="button" aria-expanded="false"
+                                            class="btn-shadow btn btn-info"><span class="btn-icon-wrapper opacity-7">
+                                            </span>Tambah User</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <h5 class="card-title">Tabel Data Pengajuan</h5>
+                    <h5 class="card-title">Tabel Data User</h5>
                     <table class="mb-0 table table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 5%;">#</th>
-                                <th style="width: 10%;">Luaran</th>
-                                <th style="width: 50%;">Judul</th>
-                                <th style="width: 15%;">Penulis</th>
-                                <th style="width: 7%;">Status</th>
-                                <th style="width: 13%;">Aksi</th>
+                                <th style="width: 50%;">Nama</th>
+                                <th style="width: 30%;">Email</th>
+                                <th style="width: 15%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,37 +95,27 @@
                             @foreach ($datas as $key => $data)
                             <tr>
                                 <th scope="row">{{ $no++ }}</th>
-                                <td>{{ $data->kerbau->jenis_luaran }}</td>
-                                <!-- <td>{{ optional($data->kerbau)->jenis_luaran }}</td> -->
-                                <td>{{ $data->judul }}</td>
+                                <td>{{ $data->name }}</td>
+                                <td>{{ $data->email }}</td>
                                 <td>
-                                    @foreach ($data->penulis_group as $kpg => $vpg)
-                                    <span>{{$vpg->penulis_ke}}. {{$vpg->nama}}</span> <br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    <div class="ms-auto badge bg-warning">Diajukan</div>
-                                </td>
-                                <td>
-                                    <div class="" style="display: inline-flex;position: relative;">
-                                        <div role="group" class="btn-group-sm btn-group btn-group-toggle">
-                                            <a href="{{route('admin.issue.show',$data->id)}}"
-                                                class="ms-auto badge bg-alternate me-1">Detail</a>
-                                        </div>
+                                    <div class="d-inline-block dropdown">
                                         <div role="group" class="btn-group-sm btn-group btn-group-toggle"
                                             data-toggle="buttons" data-bs-toggle="dropdown">
+                                            <div class="ms-auto badge bg-alternate me-1">Detail</div>
                                             <div class="ms-auto badge bg-alternate me-1">Aksi
                                                 <i class="fa fa-angle-down ms-2 opacity-8">
                                                 </i>
                                             </div>
                                         </div>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.issue.edit', $data->id) }}"><i
+                                            <a class="dropdown-item" href="{{ route('admin.user.edit', $data->id) }}"><i
                                                     class="ti ti-pencil me-1"></i>
                                                 Edit</a>
+                                            <a class="dropdown-item" href="{{ route('admin.user.edit', $data->id) }}"><i
+                                                    class="ti ti-pencil me-1"></i>
+                                                Change Password</a>
                                             <form method="POST" onsubmit="return confirm('Apakah Anda Yakin?');"
-                                                action="{{ route('admin.issue.destroy', $data->id) }}">
+                                                action="{{ route('admin.user.destroy', $data->id) }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="dropdown-item">

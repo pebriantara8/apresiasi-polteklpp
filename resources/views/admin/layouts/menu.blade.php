@@ -21,27 +21,27 @@
                 <li class="app-sidebar__heading">Dashboards</li>
                 <li>
                     <a href="{{ url('admin/dashboard') }}" class="">
-                        <i class="metismenu-icon pe-7s-science"></i>
+                        <i class="metismenu-icon pe-7s-graph3"></i>
                         Dashboard
                     </a>
                 </li>
-                <li class="app-sidebar__heading">Issue</li>
+                <li class="app-sidebar__heading">Ajuan</li>
                 <li>
                     <a href="{{ url('admin/issue/create') }}" class="">
                         <i class="metismenu-icon pe-7s-plus"></i>
-                        New Issue
+                        Tambah Baru
                     </a>
                 </li>
                 <li>
                     <a href="{{ url('admin/issue') }}" class="">
                         <i class="metismenu-icon pe-7s-news-paper"></i>
-                        Issue
+                        Data Pengajuan
                     </a>
                 </li>
                 @role('admin')
-                <li class="app-sidebar__heading">Members/Users</li>
+                <li class="app-sidebar__heading">Users Pengguna</li>
                 <li>
-                    <a href="{{ url('admin/issue/create') }}" class="">
+                    <a href="{{ url('admin/user') }}" class="">
                         <i class="metismenu-icon pe-7s-users"></i>
                         Users
                     </a>
@@ -53,7 +53,7 @@
                     </a>
                 </li>
                 @endrole
-                <li class="app-sidebar__heading">Profile</li>
+                <li class="app-sidebar__heading">Profil</li>
                 @role('admin')
                 <li>
                     <a href="{{ url('admin/issue/create') }}" class="">

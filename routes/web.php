@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\Issue\IssueController;
+use App\Http\Controllers\Admin\Issue\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -37,5 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/admin/issue', \App\Http\Controllers\Admin\Issue\IssueController::class)->names('admin.issue');
     Route::get('/admin/issue/detail/{id}', [IssueController::class, 'detail'])->name('admin.issue.detail');
+
+    Route::resource('/admin/user', \App\Http\Controllers\Admin\User\UserController::class)->names('admin.user');
 });
 require __DIR__ . '/auth.php';

@@ -20,7 +20,7 @@
                         <div class="widget-subheading">Last year</div>
                     </div>
                     <div class="widget-content-right">
-                        <div class="widget-numbers text-white"><span>10</span></div>
+                        <div class="widget-numbers text-white"><span>{{$datas['total_issue']}}</span></div>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         <div class="widget-subheading">Total Clients</div>
                     </div>
                     <div class="widget-content-right">
-                        <div class="widget-numbers text-white"><span>8</span></div>
+                        <div class="widget-numbers text-white"><span>{{$datas['total_user']}}</span></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                         <div class="widget-subheading">Total Issue</div>
                     </div>
                     <div class="widget-content-right">
-                        <div class="widget-numbers text-white"><span>4</span></div>
+                        <div class="widget-numbers text-white"><span>{{$datas['issue_acc']}}</span></div>
                     </div>
                 </div>
             </div>

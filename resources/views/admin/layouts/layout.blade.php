@@ -13,7 +13,7 @@
     <meta name="description" content="This is an example dashboard created using build-in elements and components.">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ asset('storage/template') }}/favicon.ico">
+    <link rel="icon" href="{{ asset('storage/admin/logo') }}/logoplpp.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <script defer="defer" src="{{ asset('storage/template') }}/assets/scripts/main.js"></script>
     <script defer="defer" src="{{ asset('storage/template') }}/assets/scripts/demo.js"></script>

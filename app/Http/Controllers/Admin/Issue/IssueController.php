@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Issue;
+use App\Models\Issue_jenis_buku;
 use App\Models\Issue_level_publikasi;
 use App\Models\Issue_penulis;
 use Illuminate\Support\Facades\Auth;
@@ -81,9 +82,18 @@ class IssueController extends Controller
         return view('admin.issue.detail_issue');
     }
 
-    public function show(): View
+    public function show($id): View
     {
-        return View('admin.dashboard.dashboard');
+        $dt['issue'] = Issue::find($id);
+        if ($dt['issue']->bentuk_luaran = 1) {
+            $dt['apresiasi'] = Issue_jenis_buku::find($dt['issue']->bentuk_luaran);
+            $dt['apresiasi']['nama_apresiasi'] = $dt['apresiasi']->nama_jenis_buku;
+            $dt['apresiasi']['nominal'] = $dt['apresiasi']->nominal_jenis_buku;
+            $dt['apresiasi']['total'] = $dt['issue']->biaya_apc + $dt['apresiasi']->nominal_jenis_buku;
+        }
+        $data = $dt;
+        // dd($data);
+        return view('admin.issue.show_issue', compact('data'));
     }
 
     public function store(Request $request)
