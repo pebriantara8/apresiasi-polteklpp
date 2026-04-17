@@ -16,7 +16,7 @@
             <div class="card mb-3 widget-content bg-midnight-bloom">
                 <div class="widget-content-wrapper text-white">
                     <div class="widget-content-left">
-                        <div class="widget-heading">Total Issue</div>
+                        <div class="widget-heading">Total Ajuan</div>
                         <div class="widget-subheading">Last year</div>
                     </div>
                     <div class="widget-content-right">
@@ -29,7 +29,7 @@
             <div class="card mb-3 widget-content bg-arielle-smile">
                 <div class="widget-content-wrapper text-white">
                     <div class="widget-content-left">
-                        <div class="widget-heading">Members</div>
+                        <div class="widget-heading">User Pengguna</div>
                         <div class="widget-subheading">Total Clients</div>
                     </div>
                     <div class="widget-content-right">
@@ -42,7 +42,7 @@
             <div class="card mb-3 widget-content bg-grow-early">
                 <div class="widget-content-wrapper text-white">
                     <div class="widget-content-left">
-                        <div class="widget-heading">Issue Accepted</div>
+                        <div class="widget-heading">Ajuan Diterima</div>
                         <div class="widget-subheading">Total Issue</div>
                     </div>
                     <div class="widget-content-right">

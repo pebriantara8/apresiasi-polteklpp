@@ -209,6 +209,9 @@
                             <a disabled class="disabled form-control"
                                 href="{{asset('storage/admin/bukti_pembayaran')}}/{{$datas->bukti_pembayaran}}"
                                 target="_blank">{{$datas->bukti_pembayaran}}</a>
+                            <!-- <a disabled class="disabled form-control"
+                                href="{{url('storage/app/public/admin/bukti_pembayaran')}}/{{$datas->bukti_pembayaran}}"
+                                target="_blank">{{$datas->bukti_pembayaran}}</a> -->
                         </div>
                     </div>
                     <!-- <div class="position-relative row form-check">
