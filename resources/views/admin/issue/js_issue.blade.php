@@ -169,6 +169,14 @@
                 } else {
                     const elementPenulisHapus = event.target.parentElement;
                     elementPenulisHapus.remove();
+
+                    // UPDATE VALUE RADIO BUTTON
+                    let radios3 = document.getElementsByName('penulis_utama');
+                    let formPenulis = document.getElementsByClassName('form_input_penulis');
+                    let nop = 0;
+                    for (let i = 0; i < radios3.length; i++) {
+                        document.getElementsByName('penulis_utama')[i].value = i;
+                    }
                 }
 
             }
@@ -180,6 +188,14 @@
                 } else {
                     const elementPenulisHapus = event.target.parentElement.parentElement;
                     elementPenulisHapus.remove();
+
+                    // UPDATE VALUE RADIO BUTTON
+                    let radios3 = document.getElementsByName('penulis_utama');
+                    let formPenulis = document.getElementsByClassName('form_input_penulis');
+                    let nop = 0;
+                    for (let i = 0; i < radios3.length; i++) {
+                        document.getElementsByName('penulis_utama')[i].value = i;
+                    }
                 }
 
             }
