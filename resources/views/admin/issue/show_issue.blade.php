@@ -206,12 +206,12 @@
                     <div class="position-relative row mb-3">
                         <label for="" class="form-label col-sm-2 col-form-label">Bukti Pembayaran</label>
                         <div class="col-sm-10">
-                            <!-- <a disabled class="disabled form-control"
-                                href="{{asset('storage/admin/bukti_pembayaran')}}/{{$datas->bukti_pembayaran}}"
-                                target="_blank">{{$datas->bukti_pembayaran}}</a> -->
                             <a disabled class="disabled form-control"
-                                href="https://apresiasi-polteklpp.my.id/storage/app/public/admin/bukti_pembayaran/{{$datas->bukti_pembayaran}}"
+                                href="{{asset('storage/admin/bukti_pembayaran')}}/{{$datas->bukti_pembayaran}}"
                                 target="_blank">{{$datas->bukti_pembayaran}}</a>
+                            <!-- <a disabled class="disabled form-control"
+                                href="https://apresiasi-polteklpp.my.id/storage/app/public/admin/bukti_pembayaran/{{$datas->bukti_pembayaran}}"
+                                target="_blank">{{$datas->bukti_pembayaran}}</a> -->
                         </div>
                     </div>
                     <!-- <div class="position-relative row form-check">
