@@ -118,7 +118,7 @@
                                             <a href="{{route('admin.issue.show',$data->id)}}"
                                                 class="ms-auto badge bg-alternate me-1">Detail</a>
                                         </div>
-                                        @role('admin')
+
                                         <div role="group" class="btn-group-sm btn-group btn-group-toggle"
                                             data-toggle="buttons" data-bs-toggle="dropdown">
                                             <div class="ms-auto badge bg-alternate me-1">Aksi
@@ -127,20 +127,20 @@
                                             </div>
                                         </div>
                                         <div class="dropdown-menu">
-                                            <!-- <a class="dropdown-item"
+                                            <a class="dropdown-item"
                                                 href="{{ route('admin.issue.edit', $data->id) }}"><i
                                                     class="ti ti-pencil me-1"></i>
-                                                Edit</a> -->
-                                            <form method="POST" onsubmit="return confirm('Apakah Anda Yakin?');"
+                                                Edit</a>
+                                            <form method="POST" id="data_form_hapus" class="data_form_hapus"
                                                 action="{{ route('admin.issue.destroy', $data->id) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button disabled type="submit" class="dropdown-item">
+                                                <button type="submit" class="dropdown-item">
                                                     <i class="ti ti-trash me-1"></i> Delete
                                                 </button>
                                             </form>
                                         </div>
-                                        @endrole
+
                                     </div>
                                 </td>
                             </tr>
@@ -155,4 +155,53 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('pagespecificscripts')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+
+    const form1 = document.querySelector('#data_form_hapus');
+    document.addEventListener('submit', (e) => {
+        if (e.target.classList.contains('data_form_hapus')) {
+            e.preventDefault();
+            if (confirm("Are you sure you want to delete this?")) {
+                // User clicked 'OK' (Yes)
+                console.log("Item deleted.");
+                // console.log(e.target.action);
+                const formData = new FormData(e.target);
+                axios({
+                    method: "POST",
+                    url: e.target.action,
+                    data: formData,
+                    headers: { "Content-Type": "multipart/form-data", "accept": "application/json" },
+                })
+                    .then(function (response) {
+                        //handle success
+                        console.log(response.data);
+                        if (response.data.errors) {
+                            alert(response.data.message);
+                        }
+                        if (response.data.success) {
+                            // window.location.href = "{{ route('admin.issue.index') }}";
+                            location.reload()
+                        }
+                    })
+                    .catch(function (response) {
+                        // jika validate error
+                        if (response.status ==
+                            422) {
+                            console.log("Server Error:", response, response);
+                        } else if (response.status == 500) {
+                            console.log("Server Error:", response, response);
+                        }
+                    });
+            } else {
+                // User clicked 'Cancel' (No)
+                // console.log("Action cancelled.");
+            }
+        }
+    })
+
+</script>
 @endsection

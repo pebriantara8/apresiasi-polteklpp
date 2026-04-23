@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\Profile\ProfileAdminController;
 use App\Http\Controllers\Admin\Issue\IssueController;
 use App\Http\Controllers\Admin\Issue\UserController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('/admin/dashboard', \App\Http\Controllers\Admin\Dashboard\DashboardController::class)->names('admin.dashboard');
+    Route::resource('/admin/profile', \App\Http\Controllers\Admin\Profile\ProfileAdminController::class)->names('admin.profile');
 
     Route::get('/admin/issue/detail/{id}', [IssueController::class, 'detail'])->name('admin.issue.detail');
     Route::put('/admin/issue/validasi_ajuan/{id}', [IssueController::class, 'validasi_ajuan'])->name('admin.issue.validasi_ajuan');

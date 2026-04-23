@@ -15,6 +15,7 @@ use App\Models\Issue_level_publikasi;
 use App\Models\Issue_penulis;
 use App\Models\Issue_jenis_hak_cipta;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Validation\ValidationException;
 
@@ -88,12 +89,11 @@ class IssueController extends Controller
         $dt = Issue::find($id);
         $input['issue_status'] = 1;
         $save = $dt->update($input);
-        dd($dt);
         if ($save) {
             session()->flash('success', 'User update successfully');
             return response()->json([
                 'success' => true,
-                // 'errors' => true,
+                'errors' => false,
                 'data' => $dt,
                 'code' => '200',
                 'message' => 'success update data',
@@ -109,21 +109,27 @@ class IssueController extends Controller
         }
     }
 
-    public function show($id): View
+    public function show($id)
     {
+        $dt['issue'] = Issue::find($id);
+        $datas = $dt['issue'];
+        if (!auth()->user()->hasRole('admin')) {
+            if ($datas->user_id != Auth::id()) {
+                return redirect()->route('admin.issue.index')
+                    ->with('s', 'User restore successfully');
+            }
+        }
         $datas_level_publikasi = Issue_level_publikasi::get();
         $form = 's';
         $route = 'admin.issue.validasi_ajuan';
         $breadcrumbs = 'create_new_issue';
 
-        $dt['issue'] = Issue::find($id);
-        $datas = $dt['issue'];
         $dt_issue = $dt['issue'];
         // dd($dt_issue);
         $dt_penulis = Issue_penulis::where('issue_id', $id)
             ->orderBy('penulis_ke', 'asc')
             ->get();
-        // $dt['penulis'] = $dt_penulis;
+        $datas['penulis'] = $dt_penulis;
 
         if ($dt_issue->bentuk_luaran == "1") {
             // JIKA BENTUK LUARAN BUKU
@@ -342,8 +348,8 @@ class IssueController extends Controller
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
                 'checkbox_confirm' => 'required',
-                'penulis_bank.*' => 'required',
-                'penulis_norek.*' => 'required',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
                 'penulis_jabatan.*' => 'required',
                 'checkbox_confirm' => 'required',
             ], [], [
@@ -360,8 +366,8 @@ class IssueController extends Controller
                 'penulis.*' => 'required',
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
-                'penulis_bank.*' => 'required',
-                'penulis_norek.*' => 'required',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
                 'penulis_jabatan.*' => 'required',
                 'checkbox_confirm' => 'required',
             ], [], [
@@ -377,8 +383,8 @@ class IssueController extends Controller
                 'jenis_hak_cipta' => 'required',
                 'no_hak_cipta' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
-                'penulis_bank.*' => 'required',
-                'penulis_norek.*' => 'required',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
                 'penulis_jabatan.*' => 'required',
                 'checkbox_confirm' => 'required',
             ], [], [
@@ -464,9 +470,218 @@ class IssueController extends Controller
         }
     }
 
-    public function amir()
+    public function edit($id)
     {
-        // return view('admin.auth.register');
-        return View('welcome');
+        $dt['issue'] = Issue::find($id);
+        $datas = $dt['issue'];
+        if (!auth()->user()->hasRole('admin')) {
+            if ($datas->user_id != Auth::id()) {
+                return redirect()->route('admin.issue.index')
+                    ->with('s', 'User restore successfully');
+            }
+        }
+        $form = 's';
+        $route = 'admin.issue.update';
+        $breadcrumbs = 'edit_pengajuan';
+        $datas_level_publikasi = Issue_level_publikasi::get();
+        $datas = Issue::find($id);
+        $datas['penulis'] = Issue_penulis::where('issue_id', $id)
+            ->orderBy('penulis_ke', 'asc')
+            ->get();
+        return view('admin.issue.edit_issue', compact('datas', 'route', 'form', 'datas_level_publikasi'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $datas = Issue::withTrashed()->find($id);
+        if ($datas->issue_status == 1 and !auth()->user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'errors' => true,
+                'data' => "error delete data penulis lama",
+                'code' => '200',
+                'message' => 'Tidak dapat mengubah ajuan setelah status ajuan diterima',
+            ]);
+        }
+        $input = $request->all();
+        $input['bentuk_luaran'] = $datas->bentuk_luaran;
+        if ($input['bentuk_luaran'] == "1") {
+            $this->validate($request, [
+                // 'bentuk_luaran' => 'required',
+                'judul' => 'required',
+                'jenis_buku' => 'required',
+                'isbn_buku' => 'required',
+                'penulis_utama' => 'required',
+                'penulis.*' => 'required',
+                'biaya_apc' => 'required',
+                'bukti_pembayaran' => 'mimes:pdf',
+                'checkbox_confirm' => 'required',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
+                'checkbox_confirm' => 'required',
+            ], [], [
+                'judul' => 'Judul',
+            ]);
+        } elseif ($input['bentuk_luaran'] == "2"  or $input['bentuk_luaran'] == "3") {
+            $this->validate($request, [
+                // 'bentuk_luaran' => 'required',
+                'judul' => 'required',
+                'jenis_publikasi' => 'required',
+                'level_publikasi' => 'required',
+                'link_publikasi' => 'required',
+                'penulis_utama' => 'required',
+                'penulis.*' => 'required',
+                'biaya_apc' => 'required',
+                'bukti_pembayaran' => 'mimes:pdf',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
+                'checkbox_confirm' => 'required',
+            ], [], [
+                'judul' => 'Judul',
+            ]);
+        } elseif ($input['bentuk_luaran'] == "4") {
+            $this->validate($request, [
+                // 'bentuk_luaran' => 'required',
+                'judul' => 'required',
+                'penulis_utama' => 'required',
+                'penulis.*' => 'required',
+                'biaya_apc' => 'required',
+                'jenis_hak_cipta' => 'required',
+                'no_hak_cipta' => 'required',
+                'bukti_pembayaran' => 'mimes:pdf',
+                // 'penulis_bank.*' => 'required',
+                // 'penulis_norek.*' => 'required',
+                'penulis_jabatan.*' => 'required',
+                'checkbox_confirm' => 'required',
+            ], [], [
+                'judul' => 'Judul',
+            ]);
+        } else {
+            $this->validate($request, [
+                // 'bentuk_luaran' => 'required',
+            ], [], [
+                // 'bentuk_luaran' => 'bentuk_luaran',
+            ]);
+        }
+
+        // SIMPAN DI STORAGE BILA ADA UPDATE FILE
+        $file = $request->file('bukti_pembayaran');
+        if ($file) {
+            $hashedName = $file->hashName(); // Generates the hash
+            $path = $file->storeAs('admin/bukti_pembayaran/', $hashedName, 'public');
+            if ($path) {
+                $input['bukti_pembayaran'] = $hashedName;
+                Storage::disk('public')->delete('admin/bukti_pembayaran/' . $datas->bukti_pembayaran);
+            } else {
+                $input['bukti_pembayaran'] = "";
+            }
+            $input['bukti_pembayaran'] = $input['bukti_pembayaran'];
+        } else {
+            $input['bukti_pembayaran'] = $datas->bukti_pembayaran;
+        }
+
+        $input['user_id'] = $datas->user_id;
+        // add data to db
+        $array = $input;
+        unset($array['penulis']);
+        unset($array['penulis_utama']);
+        $data = $datas->update($array);
+        if ($data) {
+
+            // INPUT DATA PENULIS KE TABEL PENULIS
+            $issue_id = $datas->id;
+            $input_penulis = $input['penulis'];
+            $input_penulis_jabatan = $input['penulis_jabatan'];
+            $input_penulis_bank = $input['penulis_bank'];
+            $input_penulis_norek = $input['penulis_norek'];
+            $arr_penulis = [];
+            foreach ($input_penulis as $kip => $vip) {
+
+                // CEK SIAPA PENULIS UTAMA
+                $arr_penulis[] = [
+                    'issue_id' => $issue_id,
+                    'penulis_ke' => $kip + 1,
+                    'nama' => $vip,
+                    'koresponden' => $input['penulis_utama'] == $kip ? 1 : 0,
+                    'status' => '0',
+                    'issue_penulis_jabatan_id' => $input_penulis_jabatan[$kip],
+                    'penulis_bank' => $input_penulis_bank[$kip],
+                    'no_rekening' => $input_penulis_norek[$kip],
+                    'status' => '0'
+                ];
+            }
+
+            // HAPUS DATA PENULIS LAMA
+            $data_penulis_old = Issue_penulis::where('issue_id', $id);
+            $del_data_penulis_old = $data_penulis_old->delete();
+            if ($del_data_penulis_old) {
+                $create_issue_penulis = Issue_penulis::insert($arr_penulis);
+                if ($create_issue_penulis) {
+                    session()->flash('success', 'Data edit successfully');
+                    return response()->json([
+                        'success' => true,
+                        // 'errors' => true,
+                        'data' => $datas->id,
+                        'code' => '200',
+                        'message' => 'success store data',
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => true,
+                        'data' => $arr_penulis,
+                        'code' => '200',
+                        'message' => 'success store data',
+                    ]);
+                }
+            } else {
+                // JIKA GAGAL HAPUS DATA PENULIS LAMA
+                return response()->json([
+                    'success' => false,
+                    'errors' => true,
+                    'data' => "error delete data penulis lama",
+                    'code' => '200',
+                    'message' => 'error',
+                ]);
+            }
+        } else {
+            //
+            return response()->json([
+                'success' => true,
+                'errors' => true,
+                'data' => "error input data ajuan",
+                'code' => '500',
+                'message' => 'error store data',
+            ]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $data = Issue::findOrFail($id);
+        if (!auth()->user()->hasRole('admin')) {
+            // User is an admin
+            if ($data->issue_status != 0) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => true,
+                    'data' => "Data deleted successfully",
+                    'code' => '500',
+                    'message' => 'Tidak dapat menghapus ajuan yg sudah diterima!',
+                ]);
+            } else {
+            }
+        }
+        $data->delete();
+        session()->flash('success', 'Data deleted successfully');
+        return response()->json([
+            'success' => true,
+            'errors' => false,
+            'data' => "Data deleted successfully",
+            'code' => '500',
+            'message' => 'Data deleted successfully',
+        ]);
     }
 }

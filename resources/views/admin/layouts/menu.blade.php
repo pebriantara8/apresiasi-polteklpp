@@ -56,7 +56,7 @@
                 <li class="app-sidebar__heading">Profil</li>
                 @role('admin')
                 <li>
-                    <a href="{{ url('admin/issue/create') }}" class="">
+                    <a href="{{ route('admin.profile.index') }}" class="">
                         <i class="metismenu-icon pe-7s-user"></i>
                         My Profile
                     </a>

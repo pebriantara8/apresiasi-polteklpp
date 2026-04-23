@@ -24,6 +24,7 @@
     <script defer="defer" src="{{ asset('storage/template') }}/assets/scripts/maps.js"></script>
     <script defer="defer" src="{{ asset('storage/template') }}/assets/scripts/chart_js.js"></script>
     <link href="{{ asset('storage/template') }}/assets/styles/main.css" rel="stylesheet">
+    <link href="{{ asset('storage/template') }}/assets/styles/new.css" rel="stylesheet">
 </head>
 
 <body>

@@ -69,6 +69,8 @@
                             <button class="btn btn-primary">VALIDASI AJUAN</button>
                         </form>
                         @else
+                        <form display="hidden" id="data-form" method="PUT" action="#" enctype="multipart/form-data">
+                        </form>
                         <button class="btn btn-secondary">AJUAN SUDAH DITERIMA/TERVALIDASI</button>
                         @endif
                     </div>
@@ -177,8 +179,8 @@
                     <div class="position-relative row mb-3">
                         <label for="" class="form-label col-sm-2 col-form-label">Link Publikasi</label>
                         <div class="col-sm-10">
-                            <a disabled class="disabled form-control" href="{{$datas->link_publikasi}}"
-                                target="_blank">{{$datas->link_publikasi}}</a>
+                            <a disabled id="linkPublikasi" class="disabled form-control"
+                                href="{{$datas->link_publikasi}}" target="_blank">{{$datas->link_publikasi}}</a>
                         </div>
                     </div>
                     <div class="position-relative row mb-3">
@@ -201,6 +203,42 @@
                         <div class="col-sm-10">
                             <input disabled value="{{ $datas->no_hak_cipta}}" name="no_hak_cipta" id="noHakCipta"
                                 placeholder="Nomor Hak Cipta/Paten" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="position-relative row mb-3">
+                        <label for="" class="form-label col-sm-2 col-form-label">Tim Penulis</label>
+                        <div class="col-sm-10" id="formPenulisParent">
+                            @foreach($datas->penulis as $kdp => $vdp)
+                            <div class="input-group mb-2 input_penulis_element" id="inputPenulisElementParent">
+                                <div class="input-group-text btn btn-danger btnDeleteElementPenulis">
+                                    <span class="btnDeleteElementPenulisX"
+                                        style="display: block; width: 100%; height: 100%;">X</span>
+                                </div>
+                                <div class="input-group-text">
+                                    <input disabled {{ $vdp->koresponden == "1" ? 'checked' :
+                                    '' }} name="penulis_utama" value="{{$vdp->penulis_ke-1}}"
+                                    type="radio"
+                                    class="form-check-input form_input_penulis_utama">
+
+                                </div>
+                                <input disabled value="{{$vdp->nama}}" placeholder="Penulis" type="text"
+                                    class="form-control form_input_penulis" name="penulis[]">
+                                <select disabled type="select" name="penulis_jabatan[]"
+                                    class="form-select penulis_jabatan">
+                                    <option value="">Jabatan/Instansi</option>
+                                    <option {{ $vdp->issue_penulis_jabatan_id==1 ? 'selected' : '' }}
+                                        value="1">Dosen Poltek LPP</option>
+                                    <option {{ $vdp->issue_penulis_jabatan_id==2 ? 'selected' : '' }}
+                                        value="2">Mahasiswa Poltek LPP</option>
+                                    <option {{ $vdp->issue_penulis_jabatan_id==3 ? 'selected' : '' }}
+                                        value="3">Pihak Luar/Eksternal</option>
+                                </select>
+                                <input disabled value="{{$vdp->penulis_bank}}" type="text" name="penulis_bank[]"
+                                    class="form-control input_penulis_bank" placeholder="Bank">
+                                <input disabled value="{{$vdp->no_rekening}}" type="text" name="penulis_norek[]"
+                                    class="form-control input_penulis_norek" placeholder="No Rekening">
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="position-relative row mb-3">
@@ -232,7 +270,7 @@
     const form = document.querySelector('#data-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (confirm("Apakah anda yakin menerima ajuan ini?")) {
+        if (confirm("Apakah anda yakin menerima pengajuan ini?")) {
             const formData = new FormData(form);
             // console.log(formData)
             const el2 = document.querySelector('#error-field');
@@ -270,4 +308,5 @@
 
     });
 </script>
+@include('admin.issue.js_show_issue')
 @endsection

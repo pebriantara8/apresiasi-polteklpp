@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class Issue_Penulis extends Model
 {
 
-    use HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'issue_id',
