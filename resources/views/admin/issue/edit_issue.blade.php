@@ -187,7 +187,8 @@
                                             class="form-control form_input_penulis" name="penulis[]">
                                         <select type="select" name="penulis_jabatan[]"
                                             class="form-select penulis_jabatan">
-                                            <option value="">Jabatan/Instansi</option>
+                                            <option value="">Jabatan/Instansi - {{$vdp->issue_penulis_jabatan_id}}
+                                            </option>
                                             <option {{ $vdp->issue_penulis_jabatan_id=='1' ? 'selected' : '' }}
                                                 value="1">Dosen Poltek LPP</option>
                                             <option {{ $vdp->issue_penulis_jabatan_id=='2' ? 'selected' : '' }}
