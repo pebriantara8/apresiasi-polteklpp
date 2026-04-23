@@ -188,11 +188,11 @@
                                         <select type="select" name="penulis_jabatan[]"
                                             class="form-select penulis_jabatan">
                                             <option value="">Jabatan/Instansi</option>
-                                            <option {{ $vdp->issue_penulis_jabatan_id==1 ? 'selected' : '' }}
+                                            <option {{ $vdp->issue_penulis_jabatan_id=='1' ? 'selected' : '' }}
                                                 value="1">Dosen Poltek LPP</option>
-                                            <option {{ $vdp->issue_penulis_jabatan_id==2 ? 'selected' : '' }}
+                                            <option {{ $vdp->issue_penulis_jabatan_id=='2' ? 'selected' : '' }}
                                                 value="2">Mahasiswa Poltek LPP</option>
-                                            <option {{ $vdp->issue_penulis_jabatan_id==3 ? 'selected' : '' }}
+                                            <option {{ $vdp->issue_penulis_jabatan_id=='3' ? 'selected' : '' }}
                                                 value="3">Pihak Luar/Eksternal</option>
                                         </select>
                                         <input value="{{$vdp->penulis_bank}}" type="text" name="penulis_bank[]"
