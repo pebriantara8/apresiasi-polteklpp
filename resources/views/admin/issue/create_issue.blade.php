@@ -171,9 +171,6 @@
                                         <span class="input-group-text" id="basic-addon1">Rp</span>
                                         <input name="biaya_apc" id="biayaAPC" placeholder="0" type="number"
                                             class="form-control input-mask-trigger">
-                                        <input class="form-control input-mask-trigger"
-                                            data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'"
-                                            im-insert="true" style="text-align: right;" placeholder="$ 0.00">
                                     </div>
                                 </div>
                             </div>
