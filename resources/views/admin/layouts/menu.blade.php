@@ -58,7 +58,7 @@
                 <li>
                     <a href="{{ route('admin.profile.index') }}" class="">
                         <i class="metismenu-icon pe-7s-user"></i>
-                        My Profile
+                        Profil Saya
                     </a>
                 </li>
                 @endrole
@@ -68,7 +68,7 @@
                         <a href="javascript:void(0)" class=""
                             onclick="event.preventDefault();this.closest('form').submit();">
                             <i class="metismenu-icon pe-7s-power"></i>
-                            Logout
+                            Keluar
                         </a>
                     </form>
                 </li>
