@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Laravel\Facades\Image;
+// use Intervention\Image\ImageManagerStatic as Image;
+// use Intervention\Image\ImageManager as Image;
+// use Intervention\Image\Drivers\Imagick\Driver;
 
 //import Facade "Storage" for image
 use Illuminate\Support\Facades\Storage;
@@ -30,7 +33,9 @@ class ProfileAdminController extends Controller
     public function index(Request $request)
     {
         $datas = User::find(Auth::id());
-        return view('admin.profile.profile_index', compact('datas'));
+        $form = 'e';
+        $route = 'admin.profile.update';
+        return view('admin.profile.profile_index', compact('datas', 'route', 'form'));
     }
 
     public function trash(Request $request)
@@ -182,17 +187,6 @@ class ProfileAdminController extends Controller
                 'message' => 'Error update data',
             ]);
         }
-        // for password change with old password
-        // $this->validate($request, [
-        //     'old_password' => [
-        //         'required', function ($attribute, $value, $fail) {
-        //             if (!Hash::check($value, 'asdasdasd')) {
-        //                 $fail('Old Password didn\'t match');
-        //             }
-        //         },
-        //     ],
-        //     'password' => 'required|same:confirm_password|min:6',
-        // ]);
     }
 
     public function update(Request $request, $id)
@@ -200,35 +194,47 @@ class ProfileAdminController extends Controller
         $user = User::withTrashed()->find($id);
         $input = $request->all();
         $this->validate($request, [
-            'name' => 'required',
-            'gender' => 'required',
-            'birthday_date' => 'required',
-            'religion' => 'required',
-            'address' => 'required',
-            'password' => 'same:confirm_password|min:6',
-            'roles' => 'required',
+            'nama' => 'required',
+            // 'tentang' => 'required',
         ], [], [
-            'name' => 'full name',
-            'roles' => 'role',
-            'img' => 'image'
+            'nama' => 'full name',
         ]);
 
-        if (!$input['username'] == $user['username']) {
+        // CEK EMAIL APAKAH GANTI
+        if ($input['email'] !== $user->email) {
             $this->validate($request, [
-                'username' => 'required|unique:users,username'
+                'email' => 'required|unique:users,email',
+            ], [], [
+                'email' => 'Email sudah digunakan di akun lain',
             ]);
-        };
-        if (!$input['email'] == $user['email']) {
+        } else {
+            $input = Arr::except($input, array('email'));
+        }
+
+        // CEK APAKAH ADA INPUT PASSWORD BARU
+        if (!empty($input['pass_lama'])) {
             $this->validate($request, [
-                'email' => 'required|unique:users,email'
-            ]);
-        };
-        if ($request->file('img')) {
-            $this->validate($request, [
-                'img' => 'image|mimes:jpeg,jpg,png,HEIC'
+                'pass_lama' => 'required|min:8',
+                'pass_baru' => 'required|same:pass_baru_konfirmasi|min:8',
+                // 'pass_baru' => 'required|confirmed|min:8',
+            ], [], [
+                // 'password.required' => 'not match with confirmation password',
             ]);
 
-            $image = $request->file('img');
+            $input['password'] = Hash::make($input['password']);
+        } else {
+            $input = Arr::except($input, array('pass_lama', 'pass_baru', 'pass_baru_konfirmasi'));
+        }
+
+        dd('input');
+
+        // CEK APAKAH INPUT AVATAR BARU
+        if ($request->file('avatar')) {
+            $this->validate($request, [
+                'avatar' => 'image|mimes:jpeg,jpg,png,HEIC'
+            ]);
+
+            $image = $request->file('avatar');
             $img = Image::make($image);
             $img->resize(300, 300, function ($constraint) {
                 $constraint->aspectRatio();
@@ -236,32 +242,21 @@ class ProfileAdminController extends Controller
             });
             $file_name = $image->hashName();
             $img->save(public_path('storage/admin/user_image/') . $file_name);
-            $input['image'] = $image->hashName();
+            $input['avatar'] = $image->hashName();
 
             Storage::delete('public/admin/user_image/' . $user->image);
+        } else {
+            $input = Arr::except($input, array('img'));
         };
 
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
-        } else {
-            $input = Arr::except($input, array('password'));
-        }
+        // dd($input);
 
-        $save = $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        // tambah role ke user
-        $role = Role::find($input['roles']);
-        $user->assignRole($role->name);
-
-        // return redirect()->route('users.index')
-        //                 ->with('success','User updated successfully');
         $save = $user->update($input);
         if ($save) {
             session()->flash('success', 'User update successfully');
             return response()->json([
                 'success' => true,
-                // 'errors' => true,
+                'errors' => false,
                 'data' => $user,
                 'code' => '200',
                 'message' => 'success update data',
@@ -308,6 +303,6 @@ class ProfileAdminController extends Controller
 
     function export_excel()
     {
-        return Excel::download(new UsersExport, 'user_export.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        // return Excel::download(new UsersExport, 'user_export.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }
