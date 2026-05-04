@@ -12,13 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
-use Intervention\Image\Laravel\Facades\Image;
-// use Intervention\Image\ImageManagerStatic as Image;
-// use Intervention\Image\ImageManager as Image;
-// use Intervention\Image\Drivers\Imagick\Driver;
+
+use Illuminate\Support\Str;
 
 //import Facade "Storage" for image
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProfileAdminController extends Controller
 {
@@ -123,13 +122,13 @@ class ProfileAdminController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(Request $id)
     {
         $user = User::find($id);
         return view('admin.user.index', compact('user'));
     }
 
-    public function edit($id)
+    public function edit(Request $id)
     {
         $datas = User::withTrashed()->find($id);
         $roles = Role::orderBy('id', 'DESC')->get();
@@ -139,7 +138,7 @@ class ProfileAdminController extends Controller
         return view('admin.user.create', compact('datas', 'roles', 'route', 'form', 'userRole'));
     }
 
-    public function edit_password($id)
+    public function edit_password(Request $id)
     {
         $datas = User::find($id);
         $roles = Role::orderBy('id', 'DESC')->get();
@@ -150,7 +149,7 @@ class ProfileAdminController extends Controller
         return view('admin.user.password_edit', compact('datas', 'roles', 'route', 'form', 'userRole'));
     }
 
-    public function update_password(Request $request, $id)
+    public function update_password(Request $request, string $id)
     {
         $user = User::find($id);
         $input = $request->all();
@@ -189,7 +188,7 @@ class ProfileAdminController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $user = User::withTrashed()->find($id);
         $input = $request->all();
@@ -216,7 +215,6 @@ class ProfileAdminController extends Controller
             $this->validate($request, [
                 'pass_lama' => 'required|min:8',
                 'pass_baru' => 'required|same:pass_baru_konfirmasi|min:8',
-                // 'pass_baru' => 'required|confirmed|min:8',
             ], [], [
                 // 'password.required' => 'not match with confirmation password',
             ]);
@@ -226,7 +224,9 @@ class ProfileAdminController extends Controller
             $input = Arr::except($input, array('pass_lama', 'pass_baru', 'pass_baru_konfirmasi'));
         }
 
-        dd('input');
+        $RR1 =  "GD: " . (extension_loaded('gd') ? 'Installed' : 'Missing') . "<br>";
+        $RR2 =  "Imagick: " . (extension_loaded('imagick') ? 'Installed' : 'Missing');
+        DD($RR2);
 
         // CEK APAKAH INPUT AVATAR BARU
         if ($request->file('avatar')) {
@@ -235,7 +235,8 @@ class ProfileAdminController extends Controller
             ]);
 
             $image = $request->file('avatar');
-            $img = Image::make($image);
+            $img = Image::read($image);
+            dd('oke');
             $img->resize(300, 300, function ($constraint) {
                 $constraint->aspectRatio();
                 // $constraint->upsize();
@@ -246,11 +247,12 @@ class ProfileAdminController extends Controller
 
             Storage::delete('public/admin/user_image/' . $user->image);
         } else {
-            $input = Arr::except($input, array('img'));
+            $input = Arr::except($input, array('avatar'));
         };
 
+        $input['name'] = $input['nama'];
+        $input['about'] = $input['tentang'];
         // dd($input);
-
         $save = $user->update($input);
         if ($save) {
             session()->flash('success', 'User update successfully');
@@ -272,7 +274,7 @@ class ProfileAdminController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $id)
     {
         $data = User::findOrFail($id);
         $data->delete();
@@ -280,12 +282,12 @@ class ProfileAdminController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    function force_delete($id)
+    function force_delete(Request $id)
     {
         $data = User::findOrFail($id);
 
         // delete image
-        Storage::delete('public/admin/user_image', $data->image);
+        // Storage::delete('public/admin/user_image', $data->image);
 
         // delete row
         $data->forceDelete();
@@ -293,7 +295,7 @@ class ProfileAdminController extends Controller
             ->with('success', 'User deleted successfully');
     }
 
-    function restore($id)
+    function restore(Request $id)
     {
         $data = User::withTrashed()->findOrFail($id);
         $data->restore();

@@ -51,7 +51,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="message">Tentang Diri</label>
                                     <textarea class="form-control" id="message" name="tentang" rows="3"
-                                        placeholder="Enter a message ..."></textarea>
+                                        placeholder="Enter a message ...">{{$datas->about}}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">

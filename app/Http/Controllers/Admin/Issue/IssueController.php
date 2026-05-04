@@ -216,12 +216,12 @@ class IssueController extends Controller
                     $dt_penulis[1]['persen'] = 50;
                     $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 50 / 100;
                 } elseif (count($dt_penulis) > 2) {
-                    $persen_bagi = 20 / (count($dt_penulis) - 1);
+                    $persen_bagi = 20 / (count($dt_penulis) - 2);
                     $dt_penulis[0]['persen'] = 40;
                     $dt_penulis[0]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
                     $dt_penulis[1]['persen'] = 40;
                     $dt_penulis[1]['persen_nominal'] = $dt['apresiasi']['nominal'] * 40 / 100;
-                    for ($i = 1; $i < count($dt_penulis); $i++) {
+                    for ($i = 2; $i < count($dt_penulis); $i++) {
                         $dt_penulis[$i]['persen'] = $persen_bagi;
                         $dt_penulis[$i]['persen_nominal'] = $dt['apresiasi']['nominal'] * $persen_bagi / 100;
                     }
@@ -347,7 +347,6 @@ class IssueController extends Controller
                 'penulis.*' => 'required',
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'required|mimes:pdf',
-                'checkbox_confirm' => 'required',
                 // 'penulis_bank.*' => 'required',
                 // 'penulis_norek.*' => 'required',
                 'penulis_jabatan.*' => 'required',
@@ -436,7 +435,6 @@ class IssueController extends Controller
                     'issue_penulis_jabatan_id' => $input_penulis_jabatan[$kip],
                     'penulis_bank' => $input_penulis_bank[$kip],
                     'no_rekening' => $input_penulis_norek[$kip],
-                    'status' => '0'
                 ];
             }
             $create_issue_penulis = Issue_penulis::insert($arr_penulis);
@@ -515,7 +513,6 @@ class IssueController extends Controller
                 'penulis.*' => 'required',
                 'biaya_apc' => 'required',
                 'bukti_pembayaran' => 'mimes:pdf',
-                'checkbox_confirm' => 'required',
                 // 'penulis_bank.*' => 'required',
                 // 'penulis_norek.*' => 'required',
                 'penulis_jabatan.*' => 'required',
