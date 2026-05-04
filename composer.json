@@ -13,7 +13,6 @@
         "intervention/image-laravel": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "phpoffice/phpspreadsheet": "^5.7",
         "spatie/laravel-permission": "^7.3"
     },
     "require-dev": {
